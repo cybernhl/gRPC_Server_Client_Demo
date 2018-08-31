@@ -4,11 +4,11 @@ apply plugin: 'idea'
 
 protobuf {
     protoc {
-        artifact = 'com.google.protobuf:protoc:3.0.0-alpha-2'
+        artifact = "com.google.protobuf:protoc:3.6.1"
     }
     plugins {
         grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:0.7.1'
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.14.0'
         }
         lite {
             artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
@@ -23,8 +23,10 @@ protobuf {
             task.builtins {
                 // In most cases you don't need the full Java output
                 // if you use the lite output.
+                remove java
             }
             task.plugins {
+                lite {}
                 grpc {
                     // Options added to --grpc_out
                     option 'lite'
@@ -58,22 +60,26 @@ idea {
 }
 
 configurations.all {
+    resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.2'
 }
 
 dependencies {
+    implementation 'javax.annotation:javax.annotation-api:1.2'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
     // For protos
-    implementation 'io.grpc:grpc-netty:0.7.1'
-    implementation 'io.grpc:grpc-okhttp:0.7.1'
-    implementation 'io.grpc:grpc-protobuf:0.7.1'
-    implementation 'io.grpc:grpc-stub:0.7.1'
-//    implementation 'io.grpc:grpc-auth:0.7.1'
-//    implementation 'io.grpc:grpc-core:0.7.1'
-//    implementation 'io.grpc:grpc-protobuf-nano:0.7.1'
+    implementation 'com.google.protobuf:protobuf-java:3.6.1'
+//  protobuf 'com.google.protobuf:protobuf-java:3.6.1'
+        implementation "io.grpc:grpc-netty:1.14.0"
+    implementation 'io.grpc:grpc-okhttp:1.14.0'
+    implementation 'io.grpc:grpc-stub:1.14.0'
+    implementation('io.grpc:grpc-protobuf-lite:1.14.0') {
+        exclude module: "protobuf-lite"
+    }
+//    implementation 'io.grpc:grpc-protobuf:1.14.0'
+//    implementation 'io.grpc:grpc-netty-shaded:1.14.0'
+//    implementation 'io.grpc:grpc-auth:1.14.0'
+//    implementation 'io.grpc:grpc-netty:1.14.0'
 
-//  implementation 'io.grpc:grpc-all:0.7.1'
-//   implementation('com.google.auth:google-auth-library-oauth2-http:0.1.0') {
-//        exclude module: 'httpclient'
-//    }
 }
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"

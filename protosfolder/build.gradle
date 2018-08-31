@@ -1,0 +1,79 @@
+apply plugin: 'java-library'
+apply plugin: 'com.google.protobuf'
+apply plugin: 'idea'
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.0.0-alpha-2'
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:0.7.1'
+        }
+        lite {
+            artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
+        }
+        javalite {
+            // The codegen for lite comes as a separate artifact
+            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                // In most cases you don't need the full Java output
+                // if you use the lite output.
+            }
+            task.plugins {
+                grpc {
+                    // Options added to --grpc_out
+                    option 'lite'
+                }
+            }
+        }
+
+    }
+}
+
+//idea {
+//    module {
+//        // Hint for autocompleting generated proto classes
+//        // Not using generatedSourceDirs because of
+//        // https://discuss.gradle.org/t/support-for-intellij-2016/15294/8
+//        sourceDirs += file("${project(':protosfolder').projectDir}/build/generated/source/proto/main/lite")
+//        sourceDirs += file("${project(':protosfolder').projectDir}/build/generated/source/proto/main/grpc")
+//    }
+//}
+
+idea {
+    module {
+        // The whole build dir is excluded by default, but we need build/generated-sources,
+        // which contains the generated proto classes.
+        excludeDirs = [file('.gradle')]
+        if (buildDir.exists()) {
+            excludeDirs += files(buildDir.listFiles())
+            excludeDirs -= file("$buildDir/generated-sources")
+        }
+    }
+}
+
+configurations.all {
+}
+
+dependencies {
+    // For protos
+    implementation 'io.grpc:grpc-netty:0.7.1'
+    implementation 'io.grpc:grpc-okhttp:0.7.1'
+    implementation 'io.grpc:grpc-protobuf:0.7.1'
+    implementation 'io.grpc:grpc-stub:0.7.1'
+//    implementation 'io.grpc:grpc-auth:0.7.1'
+//    implementation 'io.grpc:grpc-core:0.7.1'
+//    implementation 'io.grpc:grpc-protobuf-nano:0.7.1'
+
+//  implementation 'io.grpc:grpc-all:0.7.1'
+//   implementation('com.google.auth:google-auth-library-oauth2-http:0.1.0') {
+//        exclude module: 'httpclient'
+//    }
+}
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"

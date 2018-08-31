@@ -1,0 +1,3 @@
+include ':javaserver'
+include ':protosfolder'
+include ':app'

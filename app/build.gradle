@@ -1,0 +1,171 @@
+apply plugin: 'com.android.application'
+//apply plugin: 'com.google.protobuf'
+//apply plugin: 'idea'
+
+android {
+    compileSdkVersion compileVersion
+    buildToolsVersion buildVersion
+    defaultConfig {
+        applicationId "com.lovoo.ubuntudroid.hellogrpc"
+        minSdkVersion minVersion
+        targetSdkVersion targetVersion
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        debug {
+            // gRPC endpoint
+            buildConfigField('String', 'RPC_SERVER_HOST', RpcServerHost)
+            buildConfigField('int', 'RPC_SERVER_PORT', RpcServerPort)
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            // gRPC endpoint
+            buildConfigField('String', 'RPC_SERVER_HOST', RpcServerHost)
+            buildConfigField('int', 'RPC_SERVER_PORT', RpcServerPort)
+        }
+    }
+
+    sourceSets {
+        main {
+//            proto {
+////           FIXME In addition to the default 'src/main/proto' you can set other  Ref : https://github.com/CMingTseng/protobuf-gradle-plugin#fromHistory
+//                srcDir '../protosfolder/src/main/proto'
+////            srcDir 'src/main/protobuf'
+////            srcDir 'src/main/protocolbuffers'
+////            // In addition to the default '**/*.proto' (use with caution).
+////            // Using an extension other than 'proto' is NOT recommended,
+////            // because when proto files are published along with class files, we can
+////            // only tell the type of a file from its extension.
+////            include '**/*.protodevel'
+//            }
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+//            FIXME if not set proto  (include  not apply 'com.google.protobuf' plugin  ) need add protosfolder auto generated java !!
+//            FIXME  run  gradle build @ protosfolder can  generated java
+//            java {
+//                srcDir 'src/main/java'
+//                srcDir '../protosfolder/build/generated/source/proto/main/lite'
+//                srcDir '../protosfolder/build/generated/source/proto/main/grpc'
+//            }
+//            java.srcDirs = ['src/main/java','../protosfolder/build/generated/source/proto/main/lite','../protosfolder/build/generated/source/proto/main/grpc']
+//            java.srcDirs = ['src/main/java',file("${project(':protosfolder').projectDir}/build/generated/source/proto/main/lite"),file("${project(':protosfolder').projectDir}/build/generated/source/proto/main/grpc")]
+            java.srcDirs = ['src/main/java']
+            aidl.srcDirs = ['src/main/aidl']
+            res.srcDirs = ['src/main/res']
+            assets.srcDirs = ['src/main/assets']
+        }
+    }
+    compileOptions {
+        sourceCompatibility javasource
+        targetCompatibility javatarget
+    }
+    packagingOptions {
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
+    }
+}
+
+//protobuf {
+//    protoc {
+//        artifact = 'com.google.protobuf:protoc:3.0.0-alpha-2'
+//    }
+//    plugins {
+//        grpc {
+//            artifact = 'io.grpc:protoc-gen-grpc-java:0.7.1'
+//        }
+//        lite {
+//            artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
+//        }
+//        javalite {
+//            // The codegen for lite comes as a separate artifact
+//            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
+//        }
+//    }
+//    generateProtoTasks {
+//        all().each { task ->
+//            task.builtins {
+//                // In most cases you don't need the full Java output
+//                // if you use the lite output.
+//            }
+//            task.plugins {
+//                grpc {
+//                    // Options added to --grpc_out
+//                    option 'lite'
+//                }
+//            }
+//        }
+//
+//    }
+//}
+
+//idea {
+//    module {
+//        // Hint for autocompleting generated proto classes
+//        // Not using generatedSourceDirs because of
+//        // https://discuss.gradle.org/t/support-for-intellij-2016/15294/8
+//        sourceDirs += file("${project(':protosfolder').projectDir}/build/generated/source/proto/main/lite")
+//        sourceDirs += file("${project(':protosfolder').projectDir}/build/generated/source/proto/main/grpc")
+//    }
+//}
+
+//idea {
+//    module {
+//        // The whole build dir is excluded by default, but we need build/generated-sources,
+//        // which contains the generated proto classes.
+//        excludeDirs = [file('.gradle')]
+//        if (buildDir.exists()) {
+//            excludeDirs += files(buildDir.listFiles())
+//            excludeDirs -= file("$buildDir/generated-sources")
+//        }
+//    }
+//}
+
+configurations.all {
+    resolutionStrategy {
+        force "com.android.support:support-annotations:$supportLibVersion"
+        force "com.android.support:support-core-utils:$supportLibVersion"
+        force "com.android.support:support-v4:$supportLibVersion"
+        force "com.android.support:appcompat-v7:$supportLibVersion"
+        force "com.android.support:design:$supportLibVersion"
+        force "com.android.support:cardview-v7:$supportLibVersion"
+        force "com.android.support:recyclerview-v7:$supportLibVersion"
+        force "com.android.support:gridlayout-v7:$supportLibVersion"
+        force "com.android.support:support-v13:$supportLibVersion"
+        failOnVersionConflict()
+        preferProjectModules()
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar','*.aar'])
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.google.guava:guava:18.0'
+//  FIXME if apply 'com.google.protobuf' plugin this project can auto generated proto java so can close implementation
+//  implementation project(":protosfolder")
+//  FIXME if do not apply 'com.google.protobuf' plugin and do not implementation project  can use libs generated by protosfolder  build.gradle
+    // For protos
+
+    implementation 'io.grpc:grpc-netty:0.7.1'
+    implementation 'io.grpc:grpc-okhttp:0.7.1'
+    implementation 'io.grpc:grpc-protobuf:0.7.1'
+    implementation 'io.grpc:grpc-stub:0.7.1'
+//    implementation 'io.grpc:grpc-auth:0.7.1'
+//    implementation 'io.grpc:grpc-core:0.7.1'
+//    implementation 'io.grpc:grpc-protobuf-nano:0.7.1'
+
+//  implementation 'io.grpc:grpc-all:0.7.1'
+//   implementation('com.google.auth:google-auth-library-oauth2-http:0.1.0') {
+//        exclude module: 'httpclient'
+//    }
+
+    implementation 'com.jakewharton:butterknife:7.0.0'
+    annotationProcessor 'com.jakewharton:butterknife:7.0.0'
+    implementation 'com.squareup.okhttp:okhttp:2.3.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+}

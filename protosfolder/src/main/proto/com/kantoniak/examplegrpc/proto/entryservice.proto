@@ -1,0 +1,20 @@
+syntax = "proto3";
+package com.kantoniak.examplegrpc.proto;
+
+import "com/kantoniak/examplegrpc/proto/entry.proto";
+
+option optimize_for = LITE_RUNTIME;
+option java_multiple_files = true;
+
+message GetAllRequest {
+    // Empty
+}
+
+message GetAllResponse {
+    repeated Entry entries = 1;
+}
+
+service EntryService {
+    rpc GetAll (GetAllRequest) returns (GetAllResponse) {
+    }
+}

@@ -1,0 +1,15 @@
+syntax = "proto3";
+//https://github.com/kantoniak/grpc-example
+package com.kantoniak.example.grpc.proto;
+
+//import "google/protobuf/timestamp.proto";
+
+option optimize_for = LITE_RUNTIME;
+option java_multiple_files = true;
+option java_package = "com.kantoniak.grpc.demo.proto"; //this is reset new java packagename if not will direct use package
+//option java_outer_classname = "kentrytojava";//this is reset new java file name  if not will direct use proto file name --- first word is upcase
+
+message Entry {
+    int32 id = 1;
+    string name = 2;
+}

@@ -1,0 +1,22 @@
+syntax = "proto3";
+package com.kantoniak.example.grpc.proto; // the package need the same kentry
+
+import "kentry.proto";
+
+option optimize_for = LITE_RUNTIME;
+option java_multiple_files = true;
+option java_package = "com.kantoniak.grpc.demo.proto"; //this is reset new java packagename if not will direct use package
+//option java_outer_classname = "kentryservicetojava";//this is reset new java file name  if not will direct use proto file name --- first word is upcase
+
+message GetAllRequest {
+    // Empty
+}
+
+message GetAllResponse {
+    repeated Entry entries = 1;
+}
+
+service EntryService {
+    rpc GetAll (GetAllRequest) returns (GetAllResponse) {
+    }
+}

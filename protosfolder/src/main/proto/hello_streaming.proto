@@ -30,7 +30,8 @@
 syntax = "proto3";
 
 package manualflowcontrol;
-
+import "composition/composition_request.proto";
+import "composition/composition_response.proto";
 option java_multiple_files = true;
 option java_package = "demo.grpc.proto.manualflowcontrol";
 option java_outer_classname = "HellogRPCStreamingProto";
@@ -40,14 +41,4 @@ service StreamingGreeter {
     // Streams a many greetings
     rpc SayHelloStreaming (stream HelloRequest) returns (stream HelloResponse) {
     }
-}
-
-// The request message containing the user's name.
-message HelloRequest {
-    string name = 1;
-}
-
-// The response message containing the greetings
-message HelloResponse {
-    string message = 1;
 }

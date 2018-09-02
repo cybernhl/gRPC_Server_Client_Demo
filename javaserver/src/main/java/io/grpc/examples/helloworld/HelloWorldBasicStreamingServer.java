@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
-import demo.grpc.proto.manualflowcontrol.HelloRequest;
-import demo.grpc.proto.manualflowcontrol.HelloResponse;
 import demo.grpc.proto.manualflowcontrol.StreamingGreeterGrpc;
+import demo.grpc.transmission.composition.CompositionRequest;
+import demo.grpc.transmission.composition.CompositionResponse;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.Status;
@@ -52,12 +52,12 @@ public class HelloWorldBasicStreamingServer {
 
     static class GreeterImpl extends StreamingGreeterGrpc.StreamingGreeterImplBase {
         @Override
-        public StreamObserver<HelloRequest> sayHelloStreaming(final StreamObserver<HelloResponse> responseObserver) {
+        public StreamObserver<CompositionRequest.HelloRequest> sayHelloStreaming(final StreamObserver<CompositionResponse.HelloResponse> responseObserver) {
 
             // Set up manual flow control for the request stream. It feels backwards to configure the request
             // stream's flow control using the response stream's observer, but this is the way it is.
-            final ServerCallStreamObserver<HelloResponse> serverCallStreamObserver =
-                    (ServerCallStreamObserver<HelloResponse>) responseObserver;
+            final ServerCallStreamObserver<CompositionResponse.HelloResponse> serverCallStreamObserver =
+                    (ServerCallStreamObserver<CompositionResponse.HelloResponse>) responseObserver;
             serverCallStreamObserver.disableAutoInboundFlowControl();
 
             // Guard against spurious onReady() calls caused by a race between onNext() and onReady(). If the transport
@@ -86,9 +86,9 @@ public class HelloWorldBasicStreamingServer {
             });
 
             // Give gRPC a StreamObserver that can observe and process incoming requests.
-            return new StreamObserver<HelloRequest>() {
+            return new StreamObserver<CompositionRequest.HelloRequest>() {
                 @Override
-                public void onNext(HelloRequest request) {
+                public void onNext(CompositionRequest.HelloRequest request) {
                     // Process the request and send a response or an error.
                     try {
                         // Accept and enqueue the request.
@@ -101,7 +101,7 @@ public class HelloWorldBasicStreamingServer {
                         // Send a response.
                         String message = "Hello " + name;
                         logger.info("<-- " + message);
-                        HelloResponse reply = HelloResponse.newBuilder().setMessage(message).build();
+                        CompositionResponse.HelloResponse reply = CompositionResponse.HelloResponse.newBuilder().setMessage(message).build();
                         responseObserver.onNext(reply);
 
                         // Check the provided ServerCallStreamObserver to see if it is still ready to accept more messages.

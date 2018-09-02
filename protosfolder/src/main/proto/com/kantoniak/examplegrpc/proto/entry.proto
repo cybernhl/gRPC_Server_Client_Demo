@@ -4,7 +4,7 @@ package com.kantoniak.examplegrpc.proto;
 //import "google/protobuf/timestamp.proto";
 
 option optimize_for = LITE_RUNTIME;
-option java_multiple_files = true;
+option java_multiple_files = false;
 
 message Entry {
     int32 id = 1;

@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import demo.grpc.proto.GreeterGrpc;
-import demo.grpc.proto.HelloRequest;
-import demo.grpc.proto.HelloResponse;
+import demo.grpc.transmission.composition.CompositionRequest;
+import demo.grpc.transmission.composition.CompositionResponse;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
@@ -73,8 +73,8 @@ public class HelloWorldBasicServer {
     static class GreeterImpl extends GreeterGrpc.GreeterImplBase {
 
         @Override
-        public void sayHello(HelloRequest req, StreamObserver<HelloResponse> responseObserver) {
-            HelloResponse response = HelloResponse.newBuilder().setMessage("Say : Hello to " + req.getName()).build();
+        public void sayHello(CompositionRequest.HelloRequest req, StreamObserver<CompositionResponse.HelloResponse> responseObserver) {
+            CompositionResponse.HelloResponse response = CompositionResponse.HelloResponse.newBuilder().setMessage("Say : Hello to " + req.getName()).build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         }

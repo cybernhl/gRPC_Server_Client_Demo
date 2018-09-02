@@ -1,0 +1,8 @@
+syntax = "proto3";
+//package transmission;
+option java_multiple_files = false;
+option java_package = "demo.grpc.transmission.composition";
+
+message HelloRequest {
+    string name = 1;
+}

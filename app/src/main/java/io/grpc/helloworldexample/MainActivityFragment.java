@@ -49,9 +49,6 @@ import java.util.concurrent.TimeUnit;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import demo.grpc.proto.GreeterGrpc;
-import demo.grpc.proto.HelloRequest;
-import demo.grpc.proto.HelloResponse;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -180,9 +177,9 @@ public class MainActivityFragment extends Fragment {
                     mChannel = ManagedChannelBuilder.forAddress(mHost, mPort).usePlaintext().build();
                 }
                 GreeterGrpc.GreeterBlockingStub greeterStub = GreeterGrpc.newBlockingStub(mChannel);
-                HelloRequest helloRequest = HelloRequest.newBuilder().setName("Android").build();
+                CompositionResponse.HelloRequest helloRequest = CompositionResponse.HelloRequest.newBuilder().setName("Android").build();
 
-                HelloResponse helloResponse = greeterStub.sayHello(helloRequest);
+                CompositionResponse.HelloResponse helloResponse = greeterStub.sayHello(helloRequest);
                 return "SERVER: " + helloResponse.getMessage();
             } catch (SecurityException | UncheckedExecutionException e) {
                 e.printStackTrace();

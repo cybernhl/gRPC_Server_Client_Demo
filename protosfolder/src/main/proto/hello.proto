@@ -34,7 +34,7 @@ package helloworld;
 option java_multiple_files = true;
 option java_package = "demo.grpc.proto";
 option java_outer_classname = "HellogRPCProto";
-
+option objc_class_prefix = "HLW";
 // The greeting service definition.
 service Greeter {
   // Sends a greeting

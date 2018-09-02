@@ -1,13 +1,16 @@
-apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'idea'
 
-mainClassName = 'com.kantoniak.examplegrpc.server.ApiServer'
-applicationDefaultJvmArgs = ["-DRpcServerPort=${RpcServerPort}"]
-
 def unpackedDistsDir = file("${buildDir}/distributions-unpacked")
 def distName = 'api-server'
+mainClassName = 'com.kantoniak.examplegrpc.server.ApiServer'
+applicationName = 'api-server'
+//outputDir = new File(project.buildDir, 'tmp')
+//classpath = jar.outputs.files + project.configurations.runtime
+
+applicationDefaultJvmArgs = ["-DRpcServerPort=${RpcServerPort}"]
+startScripts.enabled = false
 
 sourceSets {
     main {
@@ -30,27 +33,18 @@ sourceSets {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:3.6.1"
+        artifact = "com.google.protobuf:protoc:${protobufVersion}"
     }
     plugins {
         grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:1.14.0'
-        }
-        lite {
-            artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
         }
     }
     generateProtoTasks {
         all().each { task ->
-            task.builtins {
-                // In most cases you don't need the full Java output
-                // if you use the lite output.
-                remove java
-            }
+            task.generateDescriptorSet = true
             task.plugins {
-                lite {}
                 grpc {
-                    // Options added to --grpc_out
                     option 'lite'
                 }
             }
@@ -96,20 +90,25 @@ dependencies {
 
     implementation 'javax.annotation:javax.annotation-api:1.2'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
-    implementation 'com.google.guava:guava:26.0-jre'
+    implementation 'com.google.guava:guava:20.0'
     // For protos
+    implementation "io.grpc:grpc-alts:${grpcVersion}"
+    implementation "io.grpc:grpc-netty-shaded:${grpcVersion}"
+    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
+    implementation "io.grpc:grpc-stub:${grpcVersion}"
+    implementation "com.google.protobuf:protobuf-java-util:${protobufVersion}"
+    // Used in HelloWorldServerTls
+//    implementation "io.grpc:grpc-netty:${grpcVersion}"
+//    implementation "io.netty:netty-tcnative-boringssl-static:${nettyTcNativeVersion}"
 
-    implementation "io.grpc:grpc-netty:1.14.0"
-    implementation 'io.grpc:grpc-okhttp:1.14.0'
-    implementation 'io.grpc:grpc-stub:1.14.0'
-    implementation('io.grpc:grpc-protobuf:1.14.0') {
-        exclude module: "protobuf-lite"
-    }
-//    implementation 'io.grpc:grpc-protobuf-lite:1.14.0'
-//    implementation 'io.grpc:grpc-netty-shaded:1.14.0'
-//    implementation 'io.grpc:grpc-auth:1.14.0'
-//    implementation 'io.grpc:grpc-netty:1.14.0'
-//    implementation 'io.grpc:grpc-all:1.14.0'
+//    implementation "io.grpc:grpc-protobuf-lite:${grpcVersion}
+//    implementation "io.grpc:grpc-auth:${grpcVersion}"
+//    implementation "io.grpc:grpc-okhttp:${grpcVersion}"
+//    implementation("io.grpc:grpc-protobuf:${grpcVersion}") {
+//        exclude module: "protobuf-lite"
+//    }
+
+//    implementation "io.grpc:grpc-all:${grpcVersion}"
 //    OAuth2 for Google API Ref: https://stackoverflow.com/questions/49811232/updating-google-cloud-speech-api-protobuf-gradle-to-0-8-5-duplicate-libraries
 //    implementation('com.google.auth:google-auth-library-oauth2-http:0.7.0') {
 //        exclude module: 'httpclient'

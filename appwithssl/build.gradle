@@ -1,0 +1,127 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.protobuf'
+apply plugin: 'idea'
+
+android {
+    compileSdkVersion compileVersion
+    buildToolsVersion buildVersion
+    lintOptions {
+        disable 'GoogleAppIndexingWarning', 'HardcodedText', 'InvalidPackage'
+        textReport true
+        textOutput "stdout"
+    }
+    defaultConfig {
+        applicationId "com.lovoo.ubuntudroid.hellogrpc"
+        minSdkVersion minVersion
+        targetSdkVersion targetVersion
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        debug {
+            buildConfigField('String', 'RPC_SERVER_HOST', RpcServerHost)
+            buildConfigField('int', 'RPC_SERVER_PORT', RpcServerPort)
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField('String', 'RPC_SERVER_HOST', RpcServerHost)
+            buildConfigField('int', 'RPC_SERVER_PORT', RpcServerPort)
+        }
+    }
+
+    sourceSets {
+        main {
+            proto {
+                srcDir '../protosfolder/src/main/proto'
+            }
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+            java.srcDirs = ['src/main/java']
+            aidl.srcDirs = ['src/main/aidl']
+            res.srcDirs = ['src/main/res']
+            assets.srcDirs = ['src/main/assets']
+        }
+    }
+    compileOptions {
+        sourceCompatibility javasource
+        targetCompatibility javatarget
+    }
+    packagingOptions {
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protobufVersion}"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+        lite {
+            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.generateDescriptorSet = true
+            task.plugins {
+                lite {}
+                grpc { option 'lite' }
+            }
+        }
+    }
+}
+
+idea {
+    module {
+        excludeDirs = [file('.gradle')]
+        if (buildDir.exists()) {
+            excludeDirs += files(buildDir.listFiles())
+            excludeDirs -= file("$buildDir/generated-sources")
+        }
+    }
+}
+
+configurations.all {
+    resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.2'
+    resolutionStrategy {
+        force "com.android.support:support-annotations:$supportLibVersion"
+        force "com.android.support:support-core-utils:$supportLibVersion"
+        force "com.android.support:support-v4:$supportLibVersion"
+        force "com.android.support:appcompat-v7:$supportLibVersion"
+        force "com.android.support:design:$supportLibVersion"
+        force "com.android.support:cardview-v7:$supportLibVersion"
+        force "com.android.support:recyclerview-v7:$supportLibVersion"
+        force "com.android.support:gridlayout-v7:$supportLibVersion"
+        force "com.android.support:support-v13:$supportLibVersion"
+        failOnVersionConflict()
+        preferProjectModules()
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    testImplementation 'junit:junit:4.12'
+    implementation 'javax.annotation:javax.annotation-api:1.2'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation 'com.google.guava:guava:20.0'
+    implementation "io.grpc:grpc-protobuf-lite:${grpcVersion}"
+    implementation "io.grpc:grpc-stub:${grpcVersion}"
+    implementation "io.grpc:grpc-okhttp:${grpcVersion}"
+    implementation "io.grpc:grpc-netty:${grpcVersion}"
+    implementation "io.netty:netty-tcnative-boringssl-static:${nettyTcNativeVersion}"
+    implementation "io.grpc:grpc-alts:${grpcVersion}"
+    implementation "io.grpc:grpc-netty-shaded:${grpcVersion}"
+    implementation 'com.jakewharton:butterknife:7.0.0'
+    annotationProcessor 'com.jakewharton:butterknife:7.0.0'
+    // Used in  TLS & SSL ?
+    implementation 'com.squareup.okhttp:okhttp:2.3.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+}

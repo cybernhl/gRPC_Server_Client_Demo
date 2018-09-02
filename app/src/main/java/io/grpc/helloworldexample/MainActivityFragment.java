@@ -1,4 +1,4 @@
-package com.lovoo.ubuntudroid.hellogrpc;
+package io.grpc.helloworldexample;
 
 /**
  * Copyright (c) 2015, LOVOO GmbH
@@ -49,11 +49,12 @@ import java.util.concurrent.TimeUnit;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.grpc.ChannelImpl;
-import io.grpc.examples.helloworld.GreeterGrpc;
-import io.grpc.examples.helloworld.HelloRequest;
-import io.grpc.examples.helloworld.HelloResponse;
-import io.grpc.transport.okhttp.OkHttpChannelBuilder;
+import demo.grpc.proto.GreeterGrpc;
+import demo.grpc.proto.HelloRequest;
+import demo.grpc.proto.HelloResponse;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+
 
 /**
  * This Fragment displays UI to handle communication with the bundled GRPC server.
@@ -80,14 +81,14 @@ public class MainActivityFragment extends Fragment {
     @Bind(R.id.main_button_send_request)
     Button mSendButton;
 
-    private ChannelImpl mChannel;
+    private ManagedChannel mChannel;
 
-    public MainActivityFragment () {
+    public MainActivityFragment() {
     }
 
     @Override
-    public View onCreateView ( LayoutInflater inflater, ViewGroup container,
-                               Bundle savedInstanceState ) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, view);
 
@@ -101,25 +102,25 @@ public class MainActivityFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView () {
+    public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
         shutdownChannel();
     }
 
     @OnClick(R.id.main_button_send_request)
-    public void sendRequestToServer () {
+    public void sendRequestToServer() {
         new SendHelloTask().execute();
     }
 
-    private void log ( String logMessage ) {
+    private void log(String logMessage) {
         mLogText.append("\n" + logMessage);
     }
 
-    private void shutdownChannel () {
+    private void shutdownChannel() {
         if (mChannel != null) {
             try {
-                mChannel.shutdown().awaitTerminated(1, TimeUnit.SECONDS);
+                mChannel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 // FIXME this call seems fishy as it interrupts the main thread
                 Thread.currentThread().interrupt();
@@ -134,7 +135,7 @@ public class MainActivityFragment extends Fragment {
         private int mPort = -1;
 
         @Override
-        protected void onPreExecute () {
+        protected void onPreExecute() {
             mSendButton.setEnabled(false);
 
             String newHost = mServerHostEditText.getText().toString();
@@ -171,32 +172,33 @@ public class MainActivityFragment extends Fragment {
         }
 
         @Override
-        protected String doInBackground ( Void... params ) {
+        protected String doInBackground(Void... params) {
             try {
                 if (mChannel == null) {
-                    mChannel = OkHttpChannelBuilder.forAddress(mHost, mPort).build();
+//                    mChannel = OkHttpChannelBuilder.forAddress(mHost, mPort).build();
+//                    mChannel = ManagedChannelBuilder.forAddress(mHost, mPort).build();
+                    mChannel = ManagedChannelBuilder.forAddress(mHost, mPort).usePlaintext().build();
                 }
-                GreeterGrpc.GreeterBlockingStub greeterStub = GreeterGrpc.newBlockingStub(
-                        mChannel);
+                GreeterGrpc.GreeterBlockingStub greeterStub = GreeterGrpc.newBlockingStub(mChannel);
                 HelloRequest helloRequest = HelloRequest.newBuilder().setName("Android").build();
 
                 HelloResponse helloResponse = greeterStub.sayHello(helloRequest);
                 return "SERVER: " + helloResponse.getMessage();
-            } catch ( SecurityException | UncheckedExecutionException e ) {
+            } catch (SecurityException | UncheckedExecutionException e) {
                 e.printStackTrace();
                 return "ERROR: " + e.getMessage();
             }
         }
 
         @Override
-        protected void onPostExecute ( String s ) {
+        protected void onPostExecute(String s) {
             shutdownChannel();
             log(s);
             mSendButton.setEnabled(true);
         }
 
         @Override
-        protected void onCancelled () {
+        protected void onCancelled() {
             mSendButton.setEnabled(true);
         }
     }

@@ -1,4 +1,4 @@
-package com.lovoo.ubuntudroid.hellogrpc;
+package io.grpc.helloworldexample;
 
 /**
  * Copyright (c) 2015, LOVOO GmbH

@@ -14,11 +14,16 @@ buildscript {
         UiAutomatorLibVersion = '2.1.2'
         FirebaseLibVersion = '11.8.0'
         versionName = '0.0.0'
+        protobufVersion = '3.6.1'
+        grpcVersion = '1.14.0' // CURRENT_GRPC_VERSION
+        nettyTcNativeVersion = '2.0.7.Final'
     }
     repositories {
         maven { url "https://maven.google.com" }
         google()
         mavenCentral()
+        maven { // The google mirror is less flaky than mavenCentral()
+            url "https://maven-central.storage-download.googleapis.com/repos/central/data/" }
         jcenter()
         maven { url "https://plugins.gradle.org/m2/" }
     }
@@ -35,6 +40,9 @@ allprojects {
         maven { url "https://maven.google.com" }
         google()
         jcenter()
+        maven { // The google mirror is less flaky than mavenCentral()
+            url "https://maven-central.storage-download.googleapis.com/repos/central/data/" }
+        mavenLocal()
         mavenCentral()
         maven { url "https://jitpack.io" }
         maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local' }

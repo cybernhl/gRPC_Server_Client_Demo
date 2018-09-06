@@ -3,7 +3,7 @@ package com.kantoniak.examplegrpc.proto;
 
 import "com/kantoniak/examplegrpc/proto/entry.proto";
 
-option optimize_for = LITE_RUNTIME;
+//option optimize_for = LITE_RUNTIME;
 option java_multiple_files = false;
 
 message GetAllRequest {

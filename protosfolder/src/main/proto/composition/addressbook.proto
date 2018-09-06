@@ -1,0 +1,10 @@
+syntax = "proto2";
+//https://proandroiddev.com/how-to-setup-your-android-app-to-use-protobuf-96132340de5c
+package tutorial;
+import "composition/person.proto";
+option java_package = "com.mohsenoid.protobuftest";
+option java_outer_classname = "AddressBookProtos";
+
+message AddressBook {
+    repeated Person people = 1;
+}

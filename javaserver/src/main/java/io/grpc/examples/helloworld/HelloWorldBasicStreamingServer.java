@@ -11,6 +11,7 @@ import demo.grpc.transmission.composition.CompositionResponse;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.Status;
+import io.grpc.netty.NettyServerBuilder;
 import io.grpc.stub.ServerCallStreamObserver;
 import io.grpc.stub.StreamObserver;
 
@@ -32,7 +33,7 @@ public class HelloWorldBasicStreamingServer {
     public static void main(String[] args) throws InterruptedException, IOException {
         // Service class implementation
 
-        final Server server = ServerBuilder
+        final Server server = NettyServerBuilder
                 .forPort(8080)
                 .addService(new GreeterImpl())
                 .build()

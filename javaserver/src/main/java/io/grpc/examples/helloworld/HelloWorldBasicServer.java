@@ -8,7 +8,7 @@ import demo.grpc.proto.GreeterGrpc;
 import demo.grpc.transmission.composition.CompositionRequest;
 import demo.grpc.transmission.composition.CompositionResponse;
 import io.grpc.Server;
-import io.grpc.ServerBuilder;
+import io.grpc.netty.NettyServerBuilder;
 import io.grpc.stub.StreamObserver;
 
 
@@ -39,7 +39,7 @@ public class HelloWorldBasicServer {
     private void start() throws IOException {
         /* The port on which the server should run */
         int port = 8080;
-        server = ServerBuilder.forPort(port)
+        server = NettyServerBuilder.forPort(port)
                 .addService(new GreeterImpl())
                 .build()
                 .start();

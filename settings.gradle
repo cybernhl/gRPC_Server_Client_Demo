@@ -1,4 +1,6 @@
+
 include ':javaserver'
+include ':appserver'
 include ':protosfolder'
 include ':app'
 include ':appwithssl'

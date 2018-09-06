@@ -11,11 +11,10 @@ protobuf {
         grpc {
             artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
         }
-        lite {
+        lite { //For Android Project implementation dependencies protos
             artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
         }
-        javalite {
-            // The codegen for lite comes as a separate artifact
+        javalite {//For Android Project implementation dependencies protos
             artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
         }
     }
@@ -28,7 +27,7 @@ protobuf {
                 remove java
             }
             task.plugins {
-                lite {}
+                lite {}//For Android Project implementation dependencies protos  //need block grpc{}
                 grpc {
                     // Options added to --grpc_out
                     option 'lite'
@@ -68,20 +67,25 @@ dependencies {
     implementation 'javax.annotation:javax.annotation-api:1.2'
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     // For protos
-    implementation "io.grpc:grpc-alts:${grpcVersion}"
-    implementation "io.grpc:grpc-netty-shaded:${grpcVersion}"
+
 //    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
 //    implementation "io.grpc:grpc-protobuf-lite:${grpcVersion}"
     implementation("io.grpc:grpc-protobuf:${grpcVersion}") {
         exclude module: "protobuf-lite"
+//        exclude group: 'com.google.protobuf', module: 'hamcrest-core'
     }
     implementation "io.grpc:grpc-stub:${grpcVersion}"
     implementation "io.grpc:grpc-okhttp:${grpcVersion}"
 //    implementation "io.grpc:grpc-auth:${grpcVersion}"
 //    implementation "io.grpc:grpc-all:${grpcVersion}"
+//    implementation "io.grpc:grpc-alts:${grpcVersion}"
+//    implementation "io.grpc:grpc-netty-shaded:${grpcVersion}"
     // Used in HelloWorldServerTls
     implementation "io.grpc:grpc-netty:${grpcVersion}"
     implementation "io.netty:netty-tcnative-boringssl-static:${nettyTcNativeVersion}"
+
+    //For Android Project implementation dependencies protos //need remark up
+//    implementation 'com.google.protobuf:protobuf-lite:3.0.1'
 }
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"

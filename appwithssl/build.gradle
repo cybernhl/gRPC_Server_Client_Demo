@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'idea'
 
@@ -37,16 +39,31 @@ android {
                 srcDir '../protosfolder/src/main/proto'
             }
             manifest.srcFile 'src/main/AndroidManifest.xml'
-            java.srcDirs = ['src/main/java']
+            java.srcDirs = ['src/main/java', 'src/main/kotlin/']
             aidl.srcDirs = ['src/main/aidl']
             res.srcDirs = ['src/main/res']
             assets.srcDirs = ['src/main/assets']
         }
+
+        test {
+            java {
+                srcDir 'src/main/java'
+                srcDir 'src/test/kotlin/'
+            }
+        }
+        androidTest {
+            java {
+                srcDir 'src/androidTest/java'
+                srcDir 'src/androidTest/kotlin/'
+            }
+        }
     }
+
     compileOptions {
         sourceCompatibility javasource
         targetCompatibility javatarget
     }
+
     packagingOptions {
         exclude 'META-INF/INDEX.LIST'
         exclude 'META-INF/io.netty.versions.properties'
@@ -60,17 +77,39 @@ protobuf {
     plugins {
         grpc {
             artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+
         }
-        lite {
-            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
-        }
+        //FIXME if APP only support Android (can not use any !! Ref : https://hk.saowen.com/a/9d55edb280c562eff884c815b60b6e70cf60fe0eec96ec8389802cd5d3854baa) open below
+        //FIXME if use lite  the proto file need add  { option optimize_for = LITE_RUNTIME; }
+//        lite {
+//            // The codegen for lite comes as a separate artifact
+//            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
+//        }
     }
     generateProtoTasks {
         all().each { task ->
             task.generateDescriptorSet = true
+            //FIXME if APP only support Android (can not use any !! Ref : https://hk.saowen.com/a/9d55edb280c562eff884c815b60b6e70cf60fe0eec96ec8389802cd5d3854baa) open below
+//            task.builtins {
+//                // In most cases you don't need the full Java output
+//                // if you use the lite output.
+//                remove java
+//            }
+//            task.plugins {
+//                lite {}
+//                grpc {
+//                    // Options added to --grpc_out
+//                    option 'lite'
+//                }
+//            }
+
+            //FIXME below not use lite for Android
+            task.builtins {
+                java {}
+            }
             task.plugins {
-                lite {}
-                grpc { option 'lite' }
+                grpc {
+                }
             }
         }
     }
@@ -78,6 +117,8 @@ protobuf {
 
 idea {
     module {
+        // The whole build dir is excluded by default, but we need build/generated-sources,
+        // which contains the generated proto classes.
         excludeDirs = [file('.gradle')]
         if (buildDir.exists()) {
             excludeDirs += files(buildDir.listFiles())
@@ -85,6 +126,7 @@ idea {
         }
     }
 }
+
 
 configurations.all {
     resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.2'

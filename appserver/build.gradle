@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'idea'
 
@@ -41,10 +43,22 @@ android {
             }
             manifest.srcFile 'src/main/AndroidManifest.xml'
             //            java.srcDirs = ['src/main/java',file("${project(':protosfolder').projectDir}/build/generated/source/proto/main/lite"),file("${project(':protosfolder').projectDir}/build/generated/source/proto/main/grpc")]
-            java.srcDirs = ['src/main/java']
+            java.srcDirs = ['src/main/java', 'src/main/kotlin/']
             aidl.srcDirs = ['src/main/aidl']
             res.srcDirs = ['src/main/res']
             assets.srcDirs = ['src/main/assets']
+        }
+        test {
+            java {
+                srcDir 'src/main/java'
+                srcDir 'src/test/kotlin/'
+            }
+        }
+        androidTest {
+            java {
+                srcDir 'src/androidTest/java'
+                srcDir 'src/androidTest/kotlin/'
+            }
         }
     }
     compileOptions {
@@ -60,7 +74,7 @@ android {
 
 protobuf {
     protoc {
-        artifact = 'com.google.protobuf:protoc:3.0.0'
+        artifact = "com.google.protobuf:protoc:${protobufVersion}"
     }
     plugins {
         grpc {
@@ -131,5 +145,4 @@ dependencies {
 
     //  FIXME if apply 'com.google.protobuf' plugin this project can auto generated proto java so can close implementation
 //    implementation project(":protosfolder")//FIXME  now can not implementation project !!!!
-//    implementation 'com.google.protobuf:protobuf-lite:3.0.1'//FIXME  for implementation proto files project !!!!
 }

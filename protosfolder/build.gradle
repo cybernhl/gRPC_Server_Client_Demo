@@ -2,8 +2,17 @@ apply plugin: 'java-library'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'idea'
 
+sourceSets {
+    main {
+        proto {
+            srcDir '../protosfolder/src/main/proto'
+        }
+        java.srcDirs = ['src/main/java', 'src/main/kotlin/']
+        java.srcDirs += "${protobuf.generatedFilesBaseDir}/main/lite"
+    }
+}
+
 protobuf {
-    //FIXME  if Android Project use implementation project maybe protoc & lite (javalite ) &  grpc something wrong ??!! will Program type already present: com.google.protobuf.AbstractMessageLite$Builder
     protoc {
         artifact = "com.google.protobuf:protoc:${protobufVersion}"
     }
@@ -11,27 +20,35 @@ protobuf {
         grpc {
             artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
         }
-        lite { //For Android Project implementation dependencies protos
+        lite {
+            //For Android Project implementation dependencies protos //FIXME IF Use lite this is default method  so will auto-loading protoc-gen-javalite
             artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
-        }
-        javalite {//For Android Project implementation dependencies protos
-            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
         }
     }
     generateProtoTasks {
         all().each { task ->
             task.generateDescriptorSet = true
+            //FIXME for Android Project implementation dependencies library & not support "any"
+//            task.builtins {
+//                // In most cases you don't need the full Java output
+//                // if you use the lite output.
+//                remove java
+//            }
+//            task.plugins {
+//                lite {}
+//                grpc {
+//                    // Options added to --grpc_out
+//                    option 'lite'
+//                }
+//            }
+
+            //FIXME for Android Project implementation dependencies library & support "any"
             task.builtins {
-                // In most cases you don't need the full Java output
-                // if you use the lite output.
-                remove java
+                java {}
+//                remove java
             }
             task.plugins {
-                lite {}//For Android Project implementation dependencies protos  //need block grpc{}
-                grpc {
-                    // Options added to --grpc_out
-                    option 'lite'
-                }
+                grpc {}
             }
         }
     }
@@ -71,8 +88,8 @@ dependencies {
 //    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
 //    implementation "io.grpc:grpc-protobuf-lite:${grpcVersion}"
     implementation("io.grpc:grpc-protobuf:${grpcVersion}") {
-        exclude module: "protobuf-lite"
-//        exclude group: 'com.google.protobuf', module: 'hamcrest-core'
+//        exclude module: "protobuf-lite"
+//        exclude group: 'com.google.protobuf', module: 'protobuf-lite'
     }
     implementation "io.grpc:grpc-stub:${grpcVersion}"
     implementation "io.grpc:grpc-okhttp:${grpcVersion}"

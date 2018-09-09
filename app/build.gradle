@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.protobuf'
 apply plugin: 'idea'
 
@@ -57,10 +59,23 @@ android {
 //            }
 //            java.srcDirs = ['src/main/java','../protosfolder/build/generated/source/proto/main/lite','../protosfolder/build/generated/source/proto/main/grpc']
 //            java.srcDirs = ['src/main/java',file("${project(':protosfolder').projectDir}/build/generated/source/proto/main/lite"),file("${project(':protosfolder').projectDir}/build/generated/source/proto/main/grpc")]
-            java.srcDirs = ['src/main/java']
+            java.srcDirs = ['src/main/java', 'src/main/kotlin/']
             aidl.srcDirs = ['src/main/aidl']
             res.srcDirs = ['src/main/res']
             assets.srcDirs = ['src/main/assets']
+        }
+
+        test {
+            java {
+                srcDir 'src/main/java'
+                srcDir 'src/test/kotlin/'
+            }
+        }
+        androidTest {
+            java {
+                srcDir 'src/androidTest/java'
+                srcDir 'src/androidTest/kotlin/'
+            }
         }
     }
     compileOptions {
@@ -82,22 +97,36 @@ protobuf {
             artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
 
         }
-        lite { //For Android But can not use any !! Ref : https://hk.saowen.com/a/9d55edb280c562eff884c815b60b6e70cf60fe0eec96ec8389802cd5d3854baa
-            // The codegen for lite comes as a separate artifact
-            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
-        }
+        //FIXME if APP only support Android (can not use any !! Ref : https://hk.saowen.com/a/9d55edb280c562eff884c815b60b6e70cf60fe0eec96ec8389802cd5d3854baa) open below
+        //FIXME if use lite  the proto file need add  { option optimize_for = LITE_RUNTIME; }
+//        lite {
+//            // The codegen for lite comes as a separate artifact
+//            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
+//        }
     }
     generateProtoTasks {
         all().each { task ->
             task.generateDescriptorSet = true
+            //FIXME if APP only support Android (can not use any !! Ref : https://hk.saowen.com/a/9d55edb280c562eff884c815b60b6e70cf60fe0eec96ec8389802cd5d3854baa) open below
 //            task.builtins {
-//                java {}//FIXME Can not support Any  Ref : https://hk.saowen.com/a/9d55edb280c562eff884c815b60b6e70cf60fe0eec96ec8389802cd5d3854baa
+//                // In most cases you don't need the full Java output
+//                // if you use the lite output.
+//                remove java
 //            }
-            task.plugins {
-                lite {}//FIXME Can not support Any  Ref : https://hk.saowen.com/a/9d55edb280c562eff884c815b60b6e70cf60fe0eec96ec8389802cd5d3854baa
-                grpc {
-                    // Options added to --grpc_out
+//            task.plugins {
+//                lite {}
+//                grpc {
+//                    // Options added to --grpc_out
 //                    option 'lite'
+//                }
+//            }
+
+            //FIXME below not use lite for Android
+            task.builtins {
+                java {}
+            }
+            task.plugins {
+                grpc {
                 }
             }
         }
@@ -148,10 +177,9 @@ dependencies {
 //    protobuf files('../protosfolder/src/main/proto')//FIXME if do not use sourceSets can use protobuf to load local proto files
 //    implementation "com.google.api.grpc:proto-google-common-protos:1.0.0" //FIXME use implementation to load proto files
 
-    implementation "io.grpc:grpc-protobuf-lite:${grpcVersion}"
+    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
     implementation "io.grpc:grpc-stub:${grpcVersion}"
     implementation "io.grpc:grpc-okhttp:${grpcVersion}"
-
 
     // Used in HelloWorldServerTls
     implementation "io.grpc:grpc-netty:${grpcVersion}"
@@ -161,14 +189,9 @@ dependencies {
 //    implementation "io.grpc:grpc-netty-shaded:${grpcVersion}"
 //    implementation "io.grpc:grpc-protobuf:${grpcVersion}"
 //    implementation "io.grpc:grpc-all:${grpcVersion}"
-//    implementation 'com.google.protobuf:protobuf-java:3.6.1'//for demo sample entry.proto  entryservice.proto kentry.proto  kentryservice.proto
+    implementation 'com.google.protobuf:protobuf-java:3.6.1'
 
-//    implementation  'com.google.protobuf:protobuf-java:3.2.0'
-//    implementation  'com.google.protobuf.nano:protobuf-javanano:3.1.0'
-
-    //  FIXME if apply 'com.google.protobuf' plugin this project can auto generated proto java so can close implementation
 //    implementation project(":protosfolder")//FIXME  now can not implementation project !!!!
-//    implementation 'com.google.protobuf:protobuf-lite:3.0.1'//FIXME  for implementation proto files project !!!!
 
     implementation 'com.jakewharton:butterknife:7.0.0'
     annotationProcessor 'com.jakewharton:butterknife:7.0.0'

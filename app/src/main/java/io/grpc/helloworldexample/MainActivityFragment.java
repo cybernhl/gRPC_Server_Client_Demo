@@ -32,9 +32,9 @@ package io.grpc.helloworldexample;
 
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
-import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
@@ -70,7 +70,7 @@ import io.grpc.ManagedChannelBuilder;
  * Created by ubuntudroid.
  */
 public class MainActivityFragment extends Fragment {
-
+    private static final String TAG = "MainActivityFragment";
     @Bind(R.id.main_edit_server_host)
     EditText mServerHostEditText;
 
@@ -85,12 +85,8 @@ public class MainActivityFragment extends Fragment {
 
     private ManagedChannel mChannel;
 
-    public MainActivityFragment() {
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, view);
 

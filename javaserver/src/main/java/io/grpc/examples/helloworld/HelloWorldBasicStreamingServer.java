@@ -5,11 +5,10 @@ import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
-import demo.grpc.proto.manualflowcontrol.StreamingGreeterGrpc;
-import demo.grpc.transmission.composition.CompositionRequest;
-import demo.grpc.transmission.composition.CompositionResponse;
+import demo.grpc.proto.manualflowcontrol.getDemoAPIStreamingServiceGrpc;
+import demo.grpc.transmission.composition.Hellorequest;
+import demo.grpc.transmission.composition.Helloresponse;
 import io.grpc.Server;
-import io.grpc.ServerBuilder;
 import io.grpc.Status;
 import io.grpc.netty.NettyServerBuilder;
 import io.grpc.stub.ServerCallStreamObserver;
@@ -51,14 +50,14 @@ public class HelloWorldBasicStreamingServer {
         server.awaitTermination();
     }
 
-    static class GreeterImpl extends StreamingGreeterGrpc.StreamingGreeterImplBase {
+    static class GreeterImpl extends getDemoAPIStreamingServiceGrpc.getDemoAPIStreamingServiceImplBase {
         @Override
-        public StreamObserver<CompositionRequest.HelloRequest> sayHelloStreaming(final StreamObserver<CompositionResponse.HelloResponse> responseObserver) {
+        public StreamObserver<Hellorequest.HelloRequest> sayHelloAPIStreaming(final StreamObserver<Helloresponse.HelloResponse> responseObserver) {
 
             // Set up manual flow control for the request stream. It feels backwards to configure the request
             // stream's flow control using the response stream's observer, but this is the way it is.
-            final ServerCallStreamObserver<CompositionResponse.HelloResponse> serverCallStreamObserver =
-                    (ServerCallStreamObserver<CompositionResponse.HelloResponse>) responseObserver;
+            final ServerCallStreamObserver<Helloresponse.HelloResponse> serverCallStreamObserver =
+                    (ServerCallStreamObserver<Helloresponse.HelloResponse>) responseObserver;
             serverCallStreamObserver.disableAutoInboundFlowControl();
 
             // Guard against spurious onReady() calls caused by a race between onNext() and onReady(). If the transport
@@ -87,9 +86,9 @@ public class HelloWorldBasicStreamingServer {
             });
 
             // Give gRPC a StreamObserver that can observe and process incoming requests.
-            return new StreamObserver<CompositionRequest.HelloRequest>() {
+            return new StreamObserver<Hellorequest.HelloRequest>() {
                 @Override
-                public void onNext(CompositionRequest.HelloRequest request) {
+                public void onNext(Hellorequest.HelloRequest request) {
                     // Process the request and send a response or an error.
                     try {
                         // Accept and enqueue the request.
@@ -102,7 +101,7 @@ public class HelloWorldBasicStreamingServer {
                         // Send a response.
                         String message = "Hello " + name;
                         logger.info("<-- " + message);
-                        CompositionResponse.HelloResponse reply = CompositionResponse.HelloResponse.newBuilder().setMessage(message).build();
+                        Helloresponse.HelloResponse reply = Helloresponse.HelloResponse.newBuilder().setMessage(message).build();
                         responseObserver.onNext(reply);
 
                         // Check the provided ServerCallStreamObserver to see if it is still ready to accept more messages.

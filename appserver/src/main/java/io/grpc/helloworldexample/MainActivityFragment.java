@@ -13,12 +13,13 @@ import android.widget.TextView;
 
 import java.io.IOException;
 
-import demo.grpc.proto.GreeterGrpc;
-import demo.grpc.transmission.composition.CompositionRequest;
-import demo.grpc.transmission.composition.CompositionResponse;
+import demo.grpc.proto.getDemoAPIServiceGrpc;
+import demo.grpc.transmission.composition.Hellorequest;
+import demo.grpc.transmission.composition.Helloresponse;
 import io.grpc.Server;
 import io.grpc.netty.NettyServerBuilder;
 import io.grpc.stub.StreamObserver;
+
 
 public class MainActivityFragment extends Fragment {
     //Ref : https://hk.saowen.com/a/9d55edb280c562eff884c815b60b6e70cf60fe0eec96ec8389802cd5d3854baa
@@ -61,12 +62,11 @@ public class MainActivityFragment extends Fragment {
         }
     }
 
-    private final static class GreeterImpl extends GreeterGrpc.GreeterImplBase {
+    private class GreeterImpl extends getDemoAPIServiceGrpc.getDemoAPIServiceImplBase {
 
         @Override
-        public void sayHello(CompositionRequest.HelloRequest req, StreamObserver<CompositionResponse.HelloResponse> responseObserver) {
-            CompositionResponse.HelloResponse response = CompositionResponse.HelloResponse.newBuilder().setMessage("Say : Hello to " + req.getName()).build();
-//            mLogText.append("\n" + req.getName());
+        public void sayHelloAPI(Hellorequest.HelloRequest req, StreamObserver<Helloresponse.HelloResponse> responseObserver) {
+            Helloresponse.HelloResponse response = Helloresponse.HelloResponse.newBuilder().setMessage("Say : Hello to " + req.getName()).build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         }

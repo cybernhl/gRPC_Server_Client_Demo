@@ -49,9 +49,9 @@ import java.util.concurrent.TimeUnit;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import demo.grpc.proto.GreeterGrpc;
-import demo.grpc.transmission.composition.CompositionRequest;
-import demo.grpc.transmission.composition.CompositionResponse;
+import demo.grpc.proto.getDemoAPIServiceGrpc;
+import demo.grpc.transmission.composition.Hellorequest;
+import demo.grpc.transmission.composition.Helloresponse;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 //import io.grpc.ManagedChannel;
@@ -177,10 +177,9 @@ public class MainActivityFragment extends Fragment {
 //                    mChannel = ManagedChannelBuilder.forAddress(mHost, mPort).build();
                     mChannel = ManagedChannelBuilder.forAddress(mHost, mPort).usePlaintext().build();
                 }
-                GreeterGrpc.GreeterBlockingStub greeterStub = GreeterGrpc.newBlockingStub(mChannel);
-                CompositionRequest.HelloRequest helloRequest = CompositionRequest.HelloRequest.newBuilder().setName("Android").build();
-
-                CompositionResponse.HelloResponse helloResponse = greeterStub.sayHello(helloRequest);
+                getDemoAPIServiceGrpc.getDemoAPIServiceBlockingStub greeterStub = getDemoAPIServiceGrpc.newBlockingStub(mChannel);
+                Hellorequest.HelloRequest helloRequest = Hellorequest.HelloRequest.newBuilder().setName("Android").build();
+                Helloresponse.HelloResponse helloResponse = greeterStub.sayHelloAPI(helloRequest);
                 return "SERVER: " + helloResponse.getMessage();
             } catch (SecurityException | UncheckedExecutionException e) {
                 e.printStackTrace();

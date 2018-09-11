@@ -4,9 +4,9 @@ package io.grpc.examples.helloworld;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import demo.grpc.proto.GreeterGrpc;
-import demo.grpc.transmission.composition.CompositionRequest;
-import demo.grpc.transmission.composition.CompositionResponse;
+import demo.grpc.proto.getDemoAPIServiceGrpc;
+import demo.grpc.transmission.composition.Hellorequest;
+import demo.grpc.transmission.composition.Helloresponse;
 import io.grpc.Server;
 import io.grpc.netty.NettyServerBuilder;
 import io.grpc.stub.StreamObserver;
@@ -40,7 +40,8 @@ public class HelloWorldBasicServer {
         /* The port on which the server should run */
         int port = 8080;
         server = NettyServerBuilder.forPort(port)
-                .addService(new GreeterImpl())
+                .addService(new GreeterImpl() {
+                })
                 .build()
                 .start();
         logger.info("Server started, listening on " + port);
@@ -70,11 +71,11 @@ public class HelloWorldBasicServer {
         }
     }
 
-    static class GreeterImpl extends GreeterGrpc.GreeterImplBase {
+    static class GreeterImpl extends getDemoAPIServiceGrpc.getDemoAPIServiceImplBase {
 
         @Override
-        public void sayHello(CompositionRequest.HelloRequest req, StreamObserver<CompositionResponse.HelloResponse> responseObserver) {
-            CompositionResponse.HelloResponse response = CompositionResponse.HelloResponse.newBuilder().setMessage("Say : Hello to " + req.getName()).build();
+        public void sayHelloAPI(Hellorequest.HelloRequest req, StreamObserver<Helloresponse.HelloResponse> responseObserver) {
+            Helloresponse.HelloResponse response = Helloresponse.HelloResponse.newBuilder().setMessage("Say : Hello to " + req.getName()).build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         }

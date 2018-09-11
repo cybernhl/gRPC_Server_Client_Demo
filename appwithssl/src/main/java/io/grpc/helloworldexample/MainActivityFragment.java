@@ -32,9 +32,9 @@ package io.grpc.helloworldexample;
 
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
-import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
@@ -49,11 +49,13 @@ import java.util.concurrent.TimeUnit;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import demo.grpc.proto.GreeterGrpc;
-import demo.grpc.proto.HelloRequest;
-import demo.grpc.proto.HelloResponse;
+import demo.grpc.proto.getDemoAPIServiceGrpc;
+import demo.grpc.transmission.composition.Hellorequest;
+import demo.grpc.transmission.composition.Helloresponse;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+//import io.grpc.ManagedChannel;
+//import io.grpc.ManagedChannelBuilder;
 
 
 /**
@@ -68,7 +70,7 @@ import io.grpc.ManagedChannelBuilder;
  * Created by ubuntudroid.
  */
 public class MainActivityFragment extends Fragment {
-
+    private static final String TAG = "MainActivityFragment";
     @Bind(R.id.main_edit_server_host)
     EditText mServerHostEditText;
 
@@ -83,12 +85,8 @@ public class MainActivityFragment extends Fragment {
 
     private ManagedChannel mChannel;
 
-    public MainActivityFragment() {
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, view);
 
@@ -179,10 +177,9 @@ public class MainActivityFragment extends Fragment {
 //                    mChannel = ManagedChannelBuilder.forAddress(mHost, mPort).build();
                     mChannel = ManagedChannelBuilder.forAddress(mHost, mPort).usePlaintext().build();
                 }
-                GreeterGrpc.GreeterBlockingStub greeterStub = GreeterGrpc.newBlockingStub(mChannel);
-                HelloRequest helloRequest = HelloRequest.newBuilder().setName("Android").build();
-
-                HelloResponse helloResponse = greeterStub.sayHello(helloRequest);
+                getDemoAPIServiceGrpc.getDemoAPIServiceBlockingStub greeterStub = getDemoAPIServiceGrpc.newBlockingStub(mChannel);
+                Hellorequest.HelloRequest helloRequest = Hellorequest.HelloRequest.newBuilder().setName("Android").build();
+                Helloresponse.HelloResponse helloResponse = greeterStub.sayHelloAPI(helloRequest);
                 return "SERVER: " + helloResponse.getMessage();
             } catch (SecurityException | UncheckedExecutionException e) {
                 e.printStackTrace();

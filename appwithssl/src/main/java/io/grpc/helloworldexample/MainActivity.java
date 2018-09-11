@@ -30,8 +30,8 @@ package io.grpc.helloworldexample;
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -41,12 +41,14 @@ import android.view.MenuItem;
  *
  * Created by ubuntudroid.
  */
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getSupportFragmentManager().beginTransaction().replace(R.id.content, new SelectFragment()).commitAllowingStateLoss();
     }
 
 

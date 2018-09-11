@@ -30,15 +30,15 @@
 syntax = "proto3";
 
 package manualflowcontrol;
-import "composition/composition_request.proto";
-import "composition/composition_response.proto";
+import "composition/body/request/hellorequest.proto";
+import "composition/body/response/helloresponse.proto";
 option java_multiple_files = true;
 option java_package = "demo.grpc.proto.manualflowcontrol";
 option java_outer_classname = "HellogRPCStreamingProto";
 option objc_class_prefix = "HLWS";
 // The greeting service definition.
-service StreamingGreeter {
+service getDemoAPIStreamingService {
     // Streams a many greetings
-    rpc SayHelloStreaming (stream HelloRequest) returns (stream HelloResponse) {
+    rpc SayHelloAPIStreaming (stream HelloRequest) returns (stream HelloResponse) {
     }
 }
